@@ -30,6 +30,7 @@ module.exports = {
                 country_id integer not null references countries(country_id)
             );
 
+
             insert into countries (name)
             values ('Afghanistan'),
             ('Albania'),
@@ -230,6 +231,8 @@ module.exports = {
             console.log('DB seeded!')
             res.sendStatus(200)
         }).catch(err => console.log('error seeding DB', err))
+
+        
     },
     getCountries: (req,res)=> {
         //console.log(req.body)
@@ -266,24 +269,24 @@ module.exports = {
                    co.name AS country
             FROM cities ci
             JOIN countries co
-            ON ci.country_id = co.country_id;
+            ON ci.country_id = co.country_id
+            ORDER BY ci.rating;
         `).then(dbRes => {
             console.log(dbRes)
             res.status(200).send(dbRes[0])
         })
         .catch(err => console.log(err))
      },
-    deleteCity: (req,res)=> {
-        console.log(req.params)
-        let { id } = req.params
+     deleteCity: (req,res)=> {
+        console.log(req.res)
+        let {id} = req.params
         sequelize.query(`
-            DELETE city_id
-            FROM cities
+            DELETE FROM cities
             WHERE city_id IN (
                 SELECT city_id
                 FROM cities
-                WHERE city_id= ${id};
-            )
+                WHERE city_id= "${id}"
+            );
         `).then(dbRes => {
             console.log(dbRes)
             res.status(200).send(dbRes[0])
